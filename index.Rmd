@@ -1,5 +1,5 @@
 ---
-title: "Iron Deficiences in LICs"
+title: "LAB 12: Covid Visualizations"
 author: "Sylvia Baeyens"
 output: 
     html_document:
