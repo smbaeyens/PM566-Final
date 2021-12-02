@@ -1,0 +1,55 @@
+---
+title: "LAB 12: Covid Visualizations"
+author: "Sylvia Baeyens"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+This is my PM566 Final Project website.
+
+
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+library(data.table)
+library(tidyverse)
+library(dplyr)
+library(plotly)
+library(DT)
+library(knitr)
+```
+
+
+```{r, echo=FALSE}
+# Initialize code chunk options
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = TRUE,
+  cache = FALSE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px")
+```
+
+
+# Introduction
+
+This project will look at the relationship between meat consumption and anemia prevalance in low and middle income countries.
+
+Anemia is one of the most common medical conditions among menopausal women. Anemia is defined as a condition where the body lacks enough red blood cells to carry sufficient oxygen. Anemia is associated with many health risk factors and increased fatigue. 
+
+The main cause of anemia is iron deficiency. Iron is required to produce hemoglobin, a protein in red blood cells which binds to oxygen. Another secondary cause of anemia is blood loss, which occurs cyclically, usually monthly, in menopausal women; therefore, menopausal women are at an increased risk for anemia. 
+
+Iron can be consumed through diet in two forms: heme and non-heme iron. Heme iron is found only in animal products, such as red meat and poultry. Non-heme iron is plant based, and can be found in food sources such as nuts, legumes, and leafy greens. Heme iron is more readibly absorbed by the body than non-heme iron; non-heme iron often requires secondary vitamins, such as vitamin C, to upregulate proper absorption. While it is certainly possible to avoid an iron deficiency on a plant-based diet, most plant-based individuals choose to supplement their diet with iron supplements.
+
+This midterm will focus solely on lower and middle income countries, as information on proper diet and supplementation is not readily available to these populations and the economic burden of anemia is greater.
+
+# Methods
+
+In order to answer the main question, multiple data sets were acquired from various sources. The data can be organized into 3 categories: anemia data, meat consumption data, and country data.
+
+## Anemia Data
+
+The data sets related to the prevalence of anemia in 15-49 year old women in low and middle income countries (LMIC) were exported from ghdx.healthdata.org. This data was collected by the Institute of Health Metrics and Evaluation with the funding from the Bill and Melinda Gates Foundation between January 2000 and December 2019. It was published in 2021. There were three different csv files in this set, one for mild anemia, one for moderate anemia, and one for severe anemia. The thresholds for these distinctions can be found in the paper *"Anemia prevalence in women of reproductive age in low- and middle-income countries between 2000 and 2018"*, published in **Nature Medicine** in 2021, and they vary between pregnant and non-pregnant women. The data sets detailed the prevalence of each kind of anemia every year in 82 LMICs at a 5x5km level. These csv's were downloaded from the site manually and read into data tables in the R code. From there, variable names were changed to improve ease of merging. Instead of keeping the data at the 5x5km level, the mean anemia prevalence was found by country and year. Finally, the three data tables (moderate, mild, and severe) were merged into the data table "TotalAnemia". This table included all 82 countries and the mild, moderate, and severe percentages of anemia prevalence for every year from 2000 to 2019. No values were found to be missing or unreasonable. 

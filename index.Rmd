@@ -9,8 +9,6 @@ output:
 This is my PM566 Final Project website.
 
 
-
-
 ```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
 library(data.table)
 library(tidyverse)
