@@ -322,7 +322,7 @@ div.tocify {
   <a href="index.html">Home</a>
 </li>
 <li>
-  <a href="finalProj.html">Final Project</a>
+  <a href="FinalProj.html">Final Project</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -358,6 +358,35 @@ div.tocify {
 <h2>Anemia Data</h2>
 <p>The data sets related to the prevalence of anemia in 15-49 year old women in low and middle income countries (LMIC) were exported from ghdx.healthdata.org. This data was collected by the Institute of Health Metrics and Evaluation with the funding from the Bill and Melinda Gates Foundation between January 2000 and December 2019. It was published in 2021. There were three different csv files in this set, one for mild anemia, one for moderate anemia, and one for severe anemia. The thresholds for these distinctions can be found in the paper <em>“Anemia prevalence in women of reproductive age in low- and middle-income countries between 2000 and 2018”</em>, published in <strong>Nature Medicine</strong> in 2021, and they vary between pregnant and non-pregnant women. The data sets detailed the prevalence of each kind of anemia every year in 82 LMICs at a 5x5km level. These csv’s were downloaded from the site manually and read into data tables in the R code. From there, variable names were changed to improve ease of merging. Instead of keeping the data at the 5x5km level, the mean anemia prevalence was found by country and year. Finally, the three data tables (moderate, mild, and severe) were merged into the data table “TotalAnemia”. This table included all 82 countries and the mild, moderate, and severe percentages of anemia prevalence for every year from 2000 to 2019. No values were found to be missing or unreasonable.</p>
 </div>
+<div id="country-data-final-data-table" class="section level2">
+<h2>Country Data &amp; Final Data Table</h2>
+<p>Following preliminary data cleanup and wrangling, the TotalAnemia and meatData data tables were merged together by country and year to create a new data table: TotalData. All observations from the TotalAnemia data table were kept. To add a final level of analysis, a country code data set was downloaded and read in by the R code. This csv file was found on datahub.io, and lists every country, along with its three letter country code, continent, and other identifying information; only the three letter code and continent were selected for. This country code data set was then merged with the TotalData set by code, so that every observation now included the continent as well.</p>
+<p>Final data cleanup and wrangling was now performed. Any observations missing meat consumption values were removed. The data table was now left with data for 69 LMICs, for a total of 1258 observations. When looking at summaries and visualizations of the various variables, no data looked unreasonable. The data was now ready for further exploration via visualization, as seen in the preliminary results section.</p>
+</div>
+</div>
+<div id="preliminary-results" class="section level1">
+<h1>Preliminary Results</h1>
+<p>The results of the summary statistics viewed following data clean up for the 4 variables of interest in the TotalData data table are printed below. It is important to note that this data table only includes 69 Low &amp; Middle Income Countries (LMICs) are explained above. It is known that including counties such as the United States or the UK would increase all values for meat consumption in kilograms per capita.</p>
+<p>(add plot here)</p>
+<p>The values for mild and anemia prevalence appear very similar, while the prevalence of severe anemia is much lower. For all further visualization and analysis, these three percentages will be summed to find the total percentage of women in each country between the ages of 15 and 49 with anemia.</p>
+<p>The first step in visualizing data was viewing trends in total anemia prevalence for every country. To do this, the prevalence of mild, moderate, and severe anemia were summed together for every year and country. This data is visualized below, separated into the various continents represented for ease of viewing. A trend line was applied to each plot. This visualization was done to see if there are any trends over time of anemia prevalence.</p>
+<p>(add plotS here)</p>
+<p>From these 3 graphs, it does appear that during the time period between 2000 and 2017, the prevalence of anemia decreased very slightly in the majority of these LMICs, as shown by the slight negative slope of the best fit trend line. The total percentage of women between the ages of 15-49 with anemia ranges from 10-60%, depending on the country.</p>
+<p>Next, the average meat consumption in terms of kilograms per capita and the average anemia prevalence between the years of 2000 and 2017 was found for each country. This was done to compare meat consumption and anemia prevalence between these various countries.</p>
+<p>(add plotS here)</p>
+<p>As confirmed in previous graphs and tables, meat consumption ranged between 5 and 95 kilograms of meat per capita per year while total anemia prevalence ranged from 10 to 60%. Some trends that can be seen from the two graphs above include that South and North American countries have a high consumption of meat while most African countries have a lower meat consumption. The countries with the lowest meat consumption include the Asian countries of India, Sri Lanka, and Bangladesh, countries where vegetarianism is a main component of the prevalent cultures and religion. The African countries appear to have higher prevalence of anemia, while the 5 countries with the lowest prevalence of anemia are all North or South American.</p>
+<p>Finally, we looked at the relationship between meat consumption and anemia prevalance in a scatter plot, where anemia prevalance is on the y axis and meat consumption is on the x axis. Color was based on continent, to confirm trends noted in the paragraphs above. Each of the 1248 points represents one country at one year.</p>
+<p>(add plot here)</p>
+<p>From this plot, there appears to be a large negative linear relationship between meat consumption and anemia prevalance in LMICs. As meat consumption increases in a country, the prevalance of anemia decreases. Most African countries have low values for meat consumption per capita and high prevalance of anemia. Many South American countries have higher values for meat consumption and a lower prevalance of anemia. There are not many points which fall directly on the best fit line or in its immediate vicinity, indicating that the correlation might not be that large or that there are many outliers.</p>
+<p>The final level of analysis included computing the correlation coefficients between the prevalance of various severieties of anemia and meat consumption. These coefficients are shown in the table below.</p>
+<p>(table here)</p>
+<p>The values in the above table confirm the negative relationship between meat consumption and anemia prevalence, apparent in all 3 types of anemia. As the magnitude of these 3 coefficients fall between0.3 and 0.5, they indicate a low correlation.</p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>Based on the data presented above, there is a low negative correlation between meat consumption and anemia prevalance. There are likely many other factors affecting the high levels of anemia found in these LMICs, some of which are also related to diet. Further research could look at other factors, such as the consumption of other minerals and vitamins or the prevalence of other blood and digestive-related diseases.</p>
+<p>It is positive to see that the prevalance of anemia is slowly decreasing, and it would be interesting to look into why this is occuring as well.</p>
+<p>Comparing these results to those of more prosperous countries could be a final direction for this research to go into.</p>
 </div>
 
 
