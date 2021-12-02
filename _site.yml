@@ -6,7 +6,7 @@ navbar:
     - text: "Home"
       href: index.html
     - text: "Final Project"
-      href: FinalProj.html
+      href: finalProj.html
 output:
   html_document:
     theme: sandstone
