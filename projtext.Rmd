@@ -44,7 +44,7 @@ The main cause of anemia is iron deficiency. Iron is required to produce hemoglo
 
 Iron can be consumed through diet in two forms: heme and non-heme iron. Heme iron is found only in animal products, such as red meat and poultry. Non-heme iron is plant based, and can be found in food sources such as nuts, legumes, and leafy greens. Heme iron is more readibly absorbed by the body than non-heme iron; non-heme iron often requires secondary vitamins, such as vitamin C, to upregulate proper absorption. While it is certainly possible to avoid an iron deficiency on a plant-based diet, most plant-based individuals choose to supplement their diet with iron supplements.
 
-This midterm will focus solely on lower and middle income countries, as information on proper diet and supplementation is not readily available to these populations and the economic burden of anemia is greater.
+This project will focus solely on lower and middle income countries, as information on proper diet and supplementation is not readily available to these populations and the economic burden of anemia is greater.
 
 # Methods
 

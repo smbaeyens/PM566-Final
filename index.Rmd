@@ -172,7 +172,7 @@ TotalData = merge(
 
 ```
 
-```{r creating interactive plots, fig.height = 15}
+```{r creating interactive plots, fig.height = 15, echo=FALSE}
 # TotalData %>%
 #   filter("Asia"== CONTINENT) %>%
 #   ggplot(aes(x=year, y=(mildPct+modPct+sevPct)*100)) +
@@ -216,6 +216,18 @@ p4 = ggplot(data = TotalDataAvg, mapping = aes(reorder(COUNTRY, mildPct+modPct+s
     ylab('Total Percentage of Women 15-49yo with Anemia of any Severity')+
     xlab('')
 
+data2017 <- TotalData %>% filter(year=="2017")
+
+p5_scatter <- data2017 %>% 
+  plot_ly(x = ~mildPct, y = ~sevPct,
+          type = 'scatter', mode = 'markers', color = ~COUNTRY,
+          marker = list(sizemode='diameter', opacity=0.5),
+          hoverinfo = 'text',
+          text = ~paste( paste(COUNTRY, ":", sep=""), paste(" Pct Mild Anemia: ", mildPct, sep="") , paste(" Pct Sev Anemia: ", sevPct, sep=""), sep = "<br>")) %>%
+  layout(title = "Relationship Between Mild and Severe Anemia Prevalences in 2017",
+                  yaxis = list(title = "Severe Anemia Prevalence"), xaxis = list(title = "Mild Anemia Prevalence"),
+         hovermode = "compare")
+
 ```
 
 ## Assignment 05- Interactive Visualization {.tabset}
@@ -223,10 +235,16 @@ p4 = ggplot(data = TotalDataAvg, mapping = aes(reorder(COUNTRY, mildPct+modPct+s
 ### Tab 1
 
 ```{r echo=FALSE, fig.height = 15}
-ggplotly(p3)
+p5_scatter
 ```
 
 ### Tab 2
+
+```{r echo=FALSE, fig.height = 15}
+ggplotly(p3)
+```
+
+### Tab 3
 
 ```{r echo=FALSE}
 ggplotly(p4)
