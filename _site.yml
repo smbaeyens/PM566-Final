@@ -5,8 +5,6 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Project Text"
-      href: projtext.html
 output:
   html_document:
     theme: sandstone
