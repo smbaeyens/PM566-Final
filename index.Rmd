@@ -61,7 +61,7 @@ p2_scatter <- cv_states_today_scatter %>%
          hovermode = "compare")
 ```
 
-## Showcasing plots {.tabset}
+## Lab 12- Showcasing plots {.tabset}
 
 ### Tab 1
 
@@ -76,4 +76,162 @@ p2_scatter
 ```
 
 {-}
+
+
+```{r anemia data cleanup, echo= FALSE, include= FALSE}
+#reading in all 3 anemia data sets: mild, moderate & severe
+#changing mean variable to be representative of the type of anemia
+
+#full url of data is http://ghdx.healthdata.org/record/ihme-data/global-anemia-prevalence-geospatial-estimates-2000-2019
+
+mildAnemia= data.table::fread("MildAnemia.CSV") 
+mildAnemia = mildAnemia %>%
+  rename(COUNTRY = "ADM0_NAME", mildPct = "mean")
+
+modAnemia= data.table::fread("ModerateAnemia.CSV") 
+modAnemia = modAnemia %>%
+  rename(COUNTRY = "ADM0_NAME", modPct = "mean")
+
+sevAnemia= data.table::fread("SevereAnemia.CSV") 
+sevAnemia = sevAnemia %>%
+  rename(COUNTRY = "ADM0_NAME", sevPct = "mean")
+
+# finding mean Anemia pct by country & year
+mildAvg = mildAnemia[,.(
+  mildPct = mean(mildPct,na.rm = TRUE)
+  ), by = c("COUNTRY", "year")]
+modAvg = modAnemia[,.(
+  modPct = mean(modPct,na.rm = TRUE)
+  ), by = c("COUNTRY", "year")]
+sevAvg = sevAnemia[,.(
+  sevPct = mean(sevPct,na.rm = TRUE)
+  ), by = c("COUNTRY", "year")]
+
+# merging all 3 anemia data frames
+TotalAnemia = merge(
+  x = mildAvg,
+  y = modAvg,
+  all.x = TRUE, all.y = FALSE
+)
+
+TotalAnemia = merge(
+  x = TotalAnemia,
+  y = sevAvg,
+  all.x = TRUE, all.y = FALSE
+)
+
+#check for any missing data
+TotalAnemia[,table(is.na(mildPct))]
+TotalAnemia[,table(is.na(modPct))]
+TotalAnemia[,table(is.na(sevPct))]
+#no missing data
+```
+
+```{r meat data cleanup, echo= FALSE, include= FALSE}
+#reading in meat dataset
+# url : https://ourworldindata.org/meat-production#which-countries-eat-the-most-meat
+
+meatData= data.table::fread("meat-supply-per-person.csv") 
+colnames(meatData) = c("COUNTRY", "code", "year", "consumption")
+
+unique(meatData$COUNTRY)
+
+#check for missing data
+meatData[,table(is.na(consumption))]
+# no missing data
+```
+
+```{r merging all data, echo= FALSE, include= FALSE}
+#selecting necessary info from meat data & only considering beef
+
+#merging meat & anemia data
+TotalData = merge(
+  x = TotalAnemia,
+  y = meatData,
+  all.x = TRUE, all.y = FALSE
+)
+
+#download country code csv
+countryCodes= "countryCodes.csv"
+if(!file.exists(countryCodes)){
+   download.file("https://pkgstore.datahub.io/JohnSnowLabs/country-and-continent-codes-list/country-and-continent-codes-list-csv_csv/data/b7876b7f496677669644f3d1069d3121/country-and-continent-codes-list-csv_csv.csv", destfile = countryCodes)}
+
+countryCodes= data.table::fread(countryCodes)
+countryCodes = countryCodes %>%
+  rename(CONTINENT = "Continent_Name", code= "Three_Letter_Country_Code") %>%
+  select(code, CONTINENT)
+
+#merging country code data frame & Total Data data frame so that the total data frame includes continent name
+TotalData = merge(
+  x = TotalData,
+  y = countryCodes,
+  all.x = TRUE, all.y = FALSE,
+  by = "code"
+)
+
+
+```
+
+```{r creating interactive plots, fig.height = 15}
+# TotalData %>%
+#   filter("Asia"== CONTINENT) %>%
+#   ggplot(aes(x=year, y=(mildPct+modPct+sevPct)*100)) +
+#     facet_wrap(~COUNTRY, nrow= 8) +
+#     geom_point() +
+#     geom_smooth(method= "lm")+
+#     ggtitle("Anemia in Young Women in LMI Asian Countries")+
+#     theme(axis.text.x = element_text(angle = 45))+
+#     ylab('Total Percentage of Women 15-49yo with Anemia of any Severity') 
+
+p3 = TotalData %>% 
+  filter("Asia"== CONTINENT) %>%
+  ggplot(aes(x=year, y=(mildPct+modPct+sevPct)*100)) +
+    facet_wrap(~COUNTRY, nrow= 8) +
+    geom_point() +
+    geom_smooth(method= "lm")+
+    ggtitle("Anemia in Young Women in LMI Asian Countries")+
+    theme(axis.text.x = element_text(angle = 45))+
+    ylab('Total Percentage of Women 15-49yo with Anemia of any Severity')
+  # plot_ly(x = ~year, y = ~(mildPct+modPct+sevPct)*100, 
+  #         type = 'scatter', mode = 'markers',
+  #          marker = list(sizemode='diameter', opacity=0.5))
+
+#size = ~population, sizes = c(5, 70),
+TotalDataAvg = TotalData[,.(
+  consumption = mean(consumption,na.rm = TRUE),
+  mildPct = mean(mildPct,na.rm = TRUE),
+  modPct = mean(modPct,na.rm = TRUE),
+  sevPct = mean(sevPct,na.rm = TRUE)
+),by = "COUNTRY"]
+# 
+# p3 = ggplot(data = TotalDataAvg, mapping = aes(x = reorder(COUNTRY, consumption), consumption)) + 
+#   geom_bar(stat = "identity") + coord_flip()+
+#     ggtitle("Average Meat Consumption between 2000 & 2017 in 69 LMICs")+
+#     ylab('Meat Consumption (kg/capita/yr)')+
+#     xlab('')
+# 
+p4 = ggplot(data = TotalDataAvg, mapping = aes(reorder(COUNTRY, mildPct+modPct+sevPct), (mildPct+modPct+sevPct)*100)) +
+  geom_bar(stat = "identity") + coord_flip()+
+    ggtitle("Average Prevalence of Anemia in Women between 2000 & 2017 in 69 LMICs")+
+    ylab('Total Percentage of Women 15-49yo with Anemia of any Severity')+
+    xlab('')
+
+```
+
+## Assignment 05- Interactive Visualization {.tabset}
+
+### Tab 1
+
+```{r echo=FALSE, fig.height = 15}
+ggplotly(p3)
+```
+
+### Tab 2
+
+```{r echo=FALSE}
+ggplotly(p4)
+```
+
+{-}
+
 
