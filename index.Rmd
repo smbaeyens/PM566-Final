@@ -1,12 +1,11 @@
 ---
-title: "Assignment 5: Interactive Visualizations"
+title: "The Relationship between Anemia Prevalence in Young Women and Meat Consumption in Low & Middle Income Countriess "
 author: "Sylvia Baeyens"
 output: 
     html_document:
         toc: TRUE
         toc_float: TRUE
 ---
-This is my PM566 Final Project website.
 
 
 ```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
@@ -31,20 +30,21 @@ opts_chunk$set(
   fig.align = 'center',
   fig.asp = 0.618,
   out.width = "700px")
+
+options(digits=2)
 ```
 
 # Introduction
 
-This project will look at the relationship between meat consumption and anemia prevalance in low and middle income countries. 
+This PM566 final project will look at the relationship between meat consumption and anemia prevalence in young women in low and middle income countries. 
 
 Anemia is one of the most common medical conditions among menopausal women. Anemia is defined as a condition where the body lacks enough red blood cells to carry sufficient oxygen. Anemia is associated with many health risk factors and increased fatigue. 
 
 The main cause of anemia is iron deficiency. Iron is required to produce hemoglobin, a protein in red blood cells which binds to oxygen. Another secondary cause of anemia is blood loss, which occurs cyclically, usually monthly, in menopausal women; therefore, menopausal women are at an increased risk for anemia. 
 
-Iron can be consumed through diet in two forms: heme and non-heme iron. Heme iron is found only in animal products, such as red meat and poultry. Non-heme iron is plant based, and can be found in food sources such as nuts, legumes, and leafy greens. Heme iron is more readibly absorbed by the body than non-heme iron; non-heme iron often requires secondary vitamins, such as vitamin C, to upregulate proper absorption. While it is certainly possible to avoid an iron deficiency on a plant-based diet, most plant-based individuals choose to supplement their diet with iron supplements.
+Iron can be consumed through diet in two forms: heme and non-heme iron. Heme iron is found only in animal products, such as red meat and poultry. Non-heme iron is plant based, and can be found in food sources such as nuts, legumes, and leafy greens. Heme iron is more readily absorbed by the body than non-heme iron; non-heme iron often requires secondary vitamins, such as vitamin C, to up-regulate proper absorption. While it is certainly possible to avoid an iron deficiency on a plant-based diet, most plant-based individuals choose to supplement their diet with iron supplements.
 
 This project will focus solely on lower and middle income countries, as information on proper diet and supplementation is not readily available to these populations and the economic burden of anemia is greater.
-
 
 
 ```{r anemia data cleanup, echo= FALSE, include= FALSE}
@@ -144,100 +144,92 @@ TotalData = na.omit(TotalData)
 ```
 
 
-```{r creating interactive plots, fig.height = 15, echo=FALSE}
-# TotalData %>%
-#   filter("Asia"== CONTINENT) %>%
-#   ggplot(aes(x=year, y=(mildPct+modPct+sevPct)*100)) +
-#     facet_wrap(~COUNTRY, nrow= 8) +
-#     geom_point() +
-#     geom_smooth(method= "lm")+
-#     ggtitle("Anemia in Young Women in LMI Asian Countries")+
-#     theme(axis.text.x = element_text(angle = 45))+
-#     ylab('Total Percentage of Women 15-49yo with Anemia of any Severity') 
+```{r creating interactive plots, fig.height = 15, echo=FALSE, digits=2}
+
 
 p3 = ggplot(TotalData, aes(x = year, y = (mildPct+modPct+sevPct)*100)) +
   geom_line(aes(color = COUNTRY)) + geom_smooth(method = "lm") + facet_wrap(~CONTINENT, nrow= 2)+
-  labs(title = "Anemia in Young Women in all LMI Countries")+
+  labs(title = "Anemia Prevalence Trend in Young Women from 2000 - 2017")+
   xlab("Year") + ylab("Total Percentage of Women 15-49yo with Anemia of any Severity")
 
-# p3 = TotalData %>% 
-#   filter("Asia"== CONTINENT) %>%
-#   ggplot(aes(x=year, y=(mildPct+modPct+sevPct)*100)) +
-#     facet_wrap(~COUNTRY, nrow= 8) +
-#     geom_point() +
-#     geom_smooth(method= "lm")+
-#     ggtitle("Anemia in Young Women in LMI Asian Countries")+
-#     theme(axis.text.x = element_text(angle = 45))+
-#     ylab('Total Percentage of Women 15-49yo with Anemia of any Severity')
-  # plot_ly(x = ~year, y = ~(mildPct+modPct+sevPct)*100, 
-  #         type = 'scatter', mode = 'markers',
-  #          marker = list(sizemode='diameter', opacity=0.5))
+p1 = ggplot(TotalData, aes(x = year, y = consumption)) +
+  geom_line(aes(color = COUNTRY)) + geom_smooth(method = "lm") + facet_wrap(~CONTINENT, nrow= 2)+
+  labs(title = "Meat Consumption in LMICs from 2000 - 2017")+
+  xlab("Year") + ylab("Average Meat Consumption within the Country (kg/capita)")
 
-#size = ~population, sizes = c(5, 70),
+
 TotalDataAvg = TotalData[,.(
   consumption = mean(consumption,na.rm = TRUE),
   mildPct = mean(mildPct,na.rm = TRUE),
   modPct = mean(modPct,na.rm = TRUE),
   sevPct = mean(sevPct,na.rm = TRUE)
 ),by = "COUNTRY"]
-# 
-# p3 = ggplot(data = TotalDataAvg, mapping = aes(x = reorder(COUNTRY, consumption), consumption)) + 
-#   geom_bar(stat = "identity") + coord_flip()+
-#     ggtitle("Average Meat Consumption between 2000 & 2017 in 69 LMICs")+
-#     ylab('Meat Consumption (kg/capita/yr)')+
-#     xlab('')
-# 
-# p4 = ggplot(data = TotalDataAvg, mapping = aes(reorder(COUNTRY, mildPct+modPct+sevPct), (mildPct+modPct+sevPct)*100)) +
-#   geom_bar(stat = "identity") + coord_flip()+
-#     ggtitle("Average Prevalence of Anemia in Women between 2000 & 2017 in 69 LMICs")+
-#     ylab('Total Percentage of Women 15-49yo with Anemia of any Severity')+
-#     xlab('')
+
+
 
 p4 = ggplot(TotalData,aes(x=consumption, y = (mildPct+modPct+sevPct)*100, label = COUNTRY)) +
   geom_point(aes(color= CONTINENT)) +
-  geom_smooth(method= "lm") +
+  geom_smooth() +
   ggtitle("Visualizing the Relationship between Anemia & Meat Consumption in LMI Countries")+
   ylab('Total Percentage of Women 15-49 with Anemia of any Severity')+
   xlab('Meat Consumption (kg/capita/year)')
 
 
-p5_scatter = plot_ly(TotalDataAvg, x = ~mildPct, y = ~sevPct,
-          type = 'scatter', mode = 'markers', color = ~COUNTRY, 
-          marker = list(sizemode='diameter', opacity=0.5),
-          hoverinfo = 'text',
-          text = ~paste( paste(COUNTRY, ":", sep=""), paste(" Pct Mild Anemia: ", mildPct, sep="") , paste(" Pct Sev Anemia: ", sevPct, sep=""), sep = "<br>")) %>%
-  layout(title = "Relationship Between Mild and Severe Anemia Prevalences in Women",
-                  yaxis = list(title = "Severe Anemia Prevalence"), xaxis = list(title = "Mild Anemia Prevalence"),
-         hovermode = "compare")
+# p5_scatter = plot_ly(TotalDataAvg, x = ~mildPct, y = ~sevPct,
+#           type = 'scatter', mode = 'markers', color = ~COUNTRY, 
+#           marker = list(sizemode='diameter', opacity=0.5),
+#           hoverinfo = 'text',
+#           text = ~paste( paste(COUNTRY, ":", sep=""), paste(" Pct Mild Anemia: ", mildPct, sep="") , paste(" Pct Sev Anemia: ", sevPct, sep=""), sep = "<br>")) %>%
+#   layout(title = "Relationship Between Mild and Severe Anemia Prevalences in Women",
+#                   yaxis = list(title = "Severe Anemia Prevalence"), xaxis = list(title = "Mild Anemia Prevalence"),
+#          hovermode = "compare")
 
 #decrease number of decimals
 #add best fit line
 
 ```
 
-# Assignment 05- Interactive Visualization 
+# Data Exploration
 
-## Fig 1. The Relationship between Mild & Severe Anemia in all countries
+
+
+
+# Data Visualization
+
 
 ```{r echo=FALSE, fig.height = 15}
-p5_scatter
+## Fig 1. The Relationship between Mild & Severe Anemia in all countries
+
+# p5_scatter
 ```
-As expected, the different types of anemia have positive relationships. The greater the prevalence of mild anemia was in a country, the greater the likelyhood that they'd also have a proportionally high prevalence of severe anemia.
+As expected, there is a positive linear relationship between the prevalence of mild anemia and of severe anemia. The greater the prevalence of mild anemia was in a country, the greater the likelihood that they'd also have a proportionally high prevalence of severe anemia.
 
 
-## Fig 2: Change in Total Anemia Prevalence in Each Country Over Time 
+## Fig 1: Change in Total Anemia Prevalence in Each LMIC Over Time 
+
 
 ```{r echo=FALSE, fig.height = 15}
 ggplotly(p3)
 ```
-Fortunately, we are seeing an overall decrease in almost every LMIC in the prevalence of anemia.
+The above figure displays the trend of anemia prevalence in young women from 2000 to 2017. For ease of viewing, there are four subplots: one for each geographic region. Fortunately, there was an overall decrease in the prevalence of anemia in almost every LMIC, as shown by the best fit line in blue on each subplot. One clear and obvious exception to this downward trend is seen in Yemen, where the prevalence of anemia had increased by 10 percentage points over 17 years; this increase was likely due to the famine and instability present in this country. 
+
+ 
+## Fig 2: Change in Average Meat Consumption Per Capita in Each LMIC Over Time 
+
+
+```{r echo=FALSE, fig.height = 15}
+ggplotly(p1)
+```
+This figure displays the periodic trend in average meat consumption within each country between 2000 and 2017 in units of kilograms of meat food per capita. In contrast to the trends in anemia prevalence, there was a slight increase in meat consumption in most countries.
 
 
 ## Fig 3: The Relationship between Anemia Prevalence and Meat Consumption
+
 
 ```{r echo=FALSE}
 ggplotly(p4)
 ```
 
 There appears to be a large negative linear relationship between meat consumption and anemia prevalance in LMICs. As meat consumption increases in a country, the prevalance of anemia decreases. Most African countries have low values for meat consumption per capita and high prevalance of anemia. Many South American countries have higher values for meat consumption and a lower prevalance of anemia. There are not many points which fall directly on the best fit line or in its immediate vicinity, indicating that the correlation might not be that large or that there are many outliers.
+
 
