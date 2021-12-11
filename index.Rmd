@@ -273,4 +273,4 @@ Based on the data presented above, there is a high negative correlation between 
 
 Furthermore, it is positive to see an overall decrease in the prevalence of anemia in almost all countries. This could be indicative of improving general female health in LMICs as well.
 
-The full report, which includes more in-depth methods & analysis, can be viewed and downloaded: 
+The full report, which includes more in-depth methods & analysis, can be viewed and downloaded: https://smbaeyens.github.io/PM566-Final/PM566%20Final%20Project.pdf
