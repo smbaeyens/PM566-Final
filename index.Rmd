@@ -1,5 +1,5 @@
 ---
-title: "The Relationship between Anemia Prevalence in Young Women and Meat Consumption in Low & Middle Income Countriess "
+title: "The Relationship between Anemia Prevalence in Young Women and Meat Consumption in Low & Middle Income Countries "
 author: "Sylvia Baeyens"
 output: 
     html_document:
@@ -40,6 +40,8 @@ options(digits=2)
 
 This PM566 final project will look at the relationship between meat consumption and anemia prevalence in young women in low and middle income countries. 
 
+**This is a summary of the background, data visualization, and conclusion. The full report can be downloaded from the button on the top of this page or from the link at the bottom of this page**
+
 Anemia is one of the most common medical conditions among menopausal women. Anemia is defined as a condition where the body lacks enough red blood cells to carry sufficient oxygen. Anemia is associated with many health risk factors and increased fatigue. 
 
 The main cause of anemia is iron deficiency. Iron is required to produce hemoglobin, a protein in red blood cells which binds to oxygen. Another secondary cause of anemia is blood loss, which occurs cyclically, usually monthly, in menopausal women; therefore, menopausal women are at an increased risk for anemia. 
@@ -55,15 +57,15 @@ This project will focus solely on lower and middle income countries, as informat
 
 #full url of data is http://ghdx.healthdata.org/record/ihme-data/global-anemia-prevalence-geospatial-estimates-2000-2019
 
-mildAnemia= data.table::fread("MildAnemia.CSV") 
+mildAnemia= data.table::fread("data/MildAnemia.CSV") 
 mildAnemia = mildAnemia %>%
   rename(COUNTRY = "ADM0_NAME", mildPct = "mean")
 
-modAnemia= data.table::fread("ModerateAnemia.CSV") 
+modAnemia= data.table::fread("data/ModerateAnemia.CSV") 
 modAnemia = modAnemia %>%
   rename(COUNTRY = "ADM0_NAME", modPct = "mean")
 
-sevAnemia= data.table::fread("SevereAnemia.CSV") 
+sevAnemia= data.table::fread("data/SevereAnemia.CSV") 
 sevAnemia = sevAnemia %>%
   rename(COUNTRY = "ADM0_NAME", sevPct = "mean")
 
@@ -103,7 +105,7 @@ TotalAnemia[,table(is.na(sevPct))]
 #reading in meat dataset
 # url : https://ourworldindata.org/meat-production#which-countries-eat-the-most-meat
 
-meatData= data.table::fread("meat-supply-per-person.csv") 
+meatData= data.table::fread("data/meat-supply-per-person.csv") 
 colnames(meatData) = c("COUNTRY", "code", "year", "consumption")
 
 unique(meatData$COUNTRY)
@@ -125,11 +127,8 @@ TotalData = merge(
 )
 
 #download country code csv
-countryCodes= "countryCodes.csv"
-if(!file.exists(countryCodes)){
-   download.file("https://pkgstore.datahub.io/JohnSnowLabs/country-and-continent-codes-list/country-and-continent-codes-list-csv_csv/data/b7876b7f496677669644f3d1069d3121/country-and-continent-codes-list-csv_csv.csv", destfile = countryCodes)}
 
-countryCodes= data.table::fread(countryCodes)
+countryCodes= data.table::fread("data/countryCodes.csv")
 countryCodes = countryCodes %>%
   rename(CONTINENT = "Continent_Name", code= "Three_Letter_Country_Code") %>%
   select(code, CONTINENT)

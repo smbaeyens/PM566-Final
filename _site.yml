@@ -7,6 +7,9 @@ navbar:
       href: index.html
     - text: "Lab 12"
       href: lab12.html
+  right:
+    - text: "Download Report Here"
+      href: PM566 Final Project.pdf
 output:
   html_document:
     theme: sandstone
