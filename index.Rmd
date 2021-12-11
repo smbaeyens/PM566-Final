@@ -34,6 +34,8 @@ opts_chunk$set(
 options(digits=2)
 ```
 
+<br>
+
 # Introduction
 
 This PM566 final project will look at the relationship between meat consumption and anemia prevalence in young women in low and middle income countries. 
@@ -149,13 +151,13 @@ TotalData = na.omit(TotalData)
 
 p3 = ggplot(TotalData, aes(x = year, y = (mildPct+modPct+sevPct)*100)) +
   geom_line(aes(color = COUNTRY)) + geom_smooth(method = "lm") + facet_wrap(~CONTINENT, nrow= 2)+
-  labs(title = "Anemia Prevalence Trend in Young Women from 2000 - 2017")+
-  xlab("Year") + ylab("Total Percentage of Women 15-49yo with Anemia of any Severity")
+  labs(title = "Figure 1: Change in Total Anemia Prevalence in Each LMIC Over Time ")+
+  xlab("Year") + ylab("Percentage of Women 15-49yo with Anemia")
 
 p1 = ggplot(TotalData, aes(x = year, y = consumption)) +
   geom_line(aes(color = COUNTRY)) + geom_smooth(method = "lm") + facet_wrap(~CONTINENT, nrow= 2)+
-  labs(title = "Meat Consumption in LMICs from 2000 - 2017")+
-  xlab("Year") + ylab("Average Meat Consumption within the Country (kg/capita)")
+  labs(title = "Figure 2: Change in Average Meat Consumption Per Capita in Each LMIC Over Time")+
+  xlab("Year") + ylab("Average Meat Consumption (kg/capita)")
 
 
 TotalDataAvg = TotalData[,.(
@@ -165,71 +167,111 @@ TotalDataAvg = TotalData[,.(
   sevPct = mean(sevPct,na.rm = TRUE)
 ),by = "COUNTRY"]
 
+library(ggpubr)
+p4 = ggplot(TotalDataAvg,aes(x=consumption, y = (mildPct+modPct+sevPct)*100)) +
+  geom_point(aes(color= COUNTRY)) +
+  ggtitle("Figure 5: Anemia Prevalence vs Meat Consumption per Capita in LMICs")+
+  ylab('Percentage of Women 15-49 with Anemia')+
+  xlab('Meat Consumption (kg/capita/year)')+
+  geom_smooth(method= "lm")
 
-
-p4 = ggplot(TotalData,aes(x=consumption, y = (mildPct+modPct+sevPct)*100, label = COUNTRY)) +
-  geom_point(aes(color= CONTINENT)) +
-  geom_smooth() +
-  ggtitle("Visualizing the Relationship between Anemia & Meat Consumption in LMI Countries")+
-  ylab('Total Percentage of Women 15-49 with Anemia of any Severity')+
-  xlab('Meat Consumption (kg/capita/year)')
-
-
-# p5_scatter = plot_ly(TotalDataAvg, x = ~mildPct, y = ~sevPct,
-#           type = 'scatter', mode = 'markers', color = ~COUNTRY, 
-#           marker = list(sizemode='diameter', opacity=0.5),
-#           hoverinfo = 'text',
-#           text = ~paste( paste(COUNTRY, ":", sep=""), paste(" Pct Mild Anemia: ", mildPct, sep="") , paste(" Pct Sev Anemia: ", sevPct, sep=""), sep = "<br>")) %>%
-#   layout(title = "Relationship Between Mild and Severe Anemia Prevalences in Women",
-#                   yaxis = list(title = "Severe Anemia Prevalence"), xaxis = list(title = "Mild Anemia Prevalence"),
-#          hovermode = "compare")
-
-#decrease number of decimals
-#add best fit line
 
 ```
+
+<br>
 
 # Data Exploration
 
+Multiple data sets were used for the purpose of exploring the question posed in the introduction. The data sets regarding the prevalence of anemia in 15-49 year old women in low and middle income countries (LMIC) were exported from the Global Health Data Exchange website (ghdx.healthdata.org) and was collected by the Institute of Health Metrics and Evaluation. The data sets regarding meat consumption per capita were exported from the Our World in Data site (ourworldindata.org) and was collected by the United Nations Food and Agricultural Organization (FAO). 
+
+Following merging and clean up, the final data table included the consumption of meat per capita and the prevalence of mild, moderate, and severe anemia within women for 70 countries for each year between 2000 and 2017. Because both meat consumption and anemia prevalence are normalized to population size, it is possible to compare the two variables between countries with varying population sizes or across different years while population increases or decreases.
 
 
+<br>
 
 # Data Visualization
 
-
-```{r echo=FALSE, fig.height = 15}
-## Fig 1. The Relationship between Mild & Severe Anemia in all countries
-
-# p5_scatter
-```
-As expected, there is a positive linear relationship between the prevalence of mild anemia and of severe anemia. The greater the prevalence of mild anemia was in a country, the greater the likelihood that they'd also have a proportionally high prevalence of severe anemia.
-
-
-## Fig 1: Change in Total Anemia Prevalence in Each LMIC Over Time 
 
 
 ```{r echo=FALSE, fig.height = 15}
 ggplotly(p3)
 ```
-The above figure displays the trend of anemia prevalence in young women from 2000 to 2017. For ease of viewing, there are four subplots: one for each geographic region. Fortunately, there was an overall decrease in the prevalence of anemia in almost every LMIC, as shown by the best fit line in blue on each subplot. One clear and obvious exception to this downward trend is seen in Yemen, where the prevalence of anemia had increased by 10 percentage points over 17 years; this increase was likely due to the famine and instability present in this country. 
+**Figure 1 ** This figure displays the trend of anemia prevalence in young women from 2000 to 2017. For ease of viewing, there are four subplots: one for each geographic region. Fortunately, there was an overall decrease in the prevalence of anemia in almost every LMIC, as shown by the best fit line in blue on each subplot. One clear and obvious exception to this downward trend is seen in Yemen, where the prevalence of anemia had increased by 10 percentage points over 17 years; this increase was likely due to the famine and instability present in this country. 
 
- 
-## Fig 2: Change in Average Meat Consumption Per Capita in Each LMIC Over Time 
 
 
 ```{r echo=FALSE, fig.height = 15}
 ggplotly(p1)
 ```
-This figure displays the periodic trend in average meat consumption within each country between 2000 and 2017 in units of kilograms of meat food per capita. In contrast to the trends in anemia prevalence, there was a slight increase in meat consumption in most countries.
+**Figure 2** This figure displays the periodic trend in average meat consumption within each country between 2000 and 2017 in units of kilograms of meat food per capita. In contrast to the trends in anemia prevalence, there was a slight increase in meat consumption in most countries.
+
+<br>
+
+```{r worldmap creation, echo=FALSE}
+
+TotalData2017 = TotalData %>%
+  filter(year == 2017) 
+
+# light grey boundaries
+l <- list(color = toRGB("grey"), width = 0.5)
+
+# specify map projection/options
+g <- list(
+  showframe = FALSE,
+  showcoastlines = TRUE,
+  projection = list(type = 'Mercator')
+)
+
+fig <- plot_geo(TotalData2017)
+fig <- fig %>% add_trace(
+    z = ~(mildPct+modPct+sevPct)*100, color = ~(mildPct+modPct+sevPct)*100, colors = 'Blues',
+    text = ~COUNTRY, locations = ~code, marker = list(line = l)
+  )
+fig <- fig %>% colorbar(title = '% of Women with Anemia')
+fig <- fig %>% layout(
+    title = 'Figure 3: Prevalence of Anemia in Women 15-49 in LMICs in 2017',
+    geo = g
+  )
+figAnemia = fig
+
+fig <- plot_geo(TotalData2017)
+fig <- fig %>% add_trace(
+    z = ~consumption, color = ~consumption, colors = 'Reds',
+    text = ~COUNTRY, locations = ~code, marker = list(line = l)
+  )
+fig <- fig %>% colorbar(title = 'Meat Consumption (kg/capita)')
+fig <- fig %>% layout(
+    title = 'Figure 4: Meat Consumption per Capita in LMICs in 2017',
+    geo = g
+  )
+figConsumption = fig
+
+```
 
 
-## Fig 3: The Relationship between Anemia Prevalence and Meat Consumption
+```{r echo=FALSE}
+ggplotly(figAnemia)
+```
+
+
+```{r echo=FALSE}
+ggplotly(figConsumption)
+```
+**Figures 3 & 4** The figures above visually display prevalence of anemia in young women and meat consumption per capita, respectively, in the Low and Middle Income Countries in 2017. The relationship between the two variables, when comparing the two figures, appears to be inversely proportional. It is interesting to note that in many south and southeastern Asian countries, meat consumption is low due to meatless diets common in the cultures and religion found there.
 
 
 ```{r echo=FALSE}
 ggplotly(p4)
 ```
 
-There appears to be a large negative linear relationship between meat consumption and anemia prevalance in LMICs. As meat consumption increases in a country, the prevalance of anemia decreases. Most African countries have low values for meat consumption per capita and high prevalance of anemia. Many South American countries have higher values for meat consumption and a lower prevalance of anemia. There are not many points which fall directly on the best fit line or in its immediate vicinity, indicating that the correlation might not be that large or that there are many outliers.
+
+**Figure 5** Figure 5 takes the average anemia prevalence and meat consumption over the time period of 2000 to 2017 to compare between the two variables. There is a negative linear relationship between meat consumption and anemia prevalence in LMICs, as shown by the slope of the linear best fit line. As meat consumption increases in a country, the prevalence of anemia decreases. Most African countries have low values for meat consumption per capita and high prevalence of anemia. Many South American countries have higher values for meat consumption and a lower prevalence of anemia. There are not many points which fall directly on the best fit line or in its immediate vicinity, indicating that the correlation might not be that large or that there are many outliers.
+
+# Summary
 
 
+Based on the data presented above, there is a high negative correlation between meat consumption and anemia prevalence. There are likely many other factors affecting the high levels of anemia found in these LMICs, some of which are also related to diet. This is only a preliminary exploration of the available data and further research could need to be done to consider the effect of other factors, such as the consumption of other minerals and vitamins or the prevalence of  blood and digestive-related diseases. 
+
+Furthermore, it is positive to see an overall decrease in the prevalence of anemia in almost all countries. This could be indicative of improving general female health in LMICs as well.
+
+The full report, which includes more in-depth methods & analysis, can be viewed and downloaded: 
